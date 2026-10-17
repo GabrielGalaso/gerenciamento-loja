@@ -1,9 +1,13 @@
+package com.gabriel.gerenciamentoloja.service;
+
+import com.gabriel.gerenciamentoloja.exception.EstoqueInsuficienteException;
+import com.gabriel.gerenciamentoloja.exception.PedidoJaFinalizadoException;
+import com.gabriel.gerenciamentoloja.exception.ProdutoNaoEncontradoException;
 import com.gabriel.gerenciamentoloja.model.Cliente;
 import com.gabriel.gerenciamentoloja.model.ItemPedido;
 import com.gabriel.gerenciamentoloja.model.Pedido;
 import com.gabriel.gerenciamentoloja.model.Produto;
 import com.gabriel.gerenciamentoloja.repository.ProdutoRepository;
-import com.gabriel.gerenciamentoloja.service.PedidoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -64,7 +68,7 @@ public class PedidoServiceTest {
         Pedido pedido = new Pedido(1, cliente);
         ItemPedido item = new ItemPedido(produto, 8);
         pedido.adicionarItem(item);
-        IllegalArgumentException excecao = assertThrows(IllegalArgumentException.class, () -> service.verificarEstoque(pedido));
+        EstoqueInsuficienteException excecao = assertThrows(EstoqueInsuficienteException.class, () -> service.verificarEstoque(pedido));
         assertEquals("Estoque insuficiente", excecao.getMessage());
     }
 
@@ -88,7 +92,7 @@ public class PedidoServiceTest {
         ItemPedido item1 = new ItemPedido(produto, 3);
         pedido.adicionarItem(item);
         pedido.adicionarItem(item1);
-        assertThrows(IllegalArgumentException.class, () -> service.verificarEstoque(pedido));
+        assertThrows(EstoqueInsuficienteException.class, () -> service.verificarEstoque(pedido));
 
     }
 
@@ -98,7 +102,8 @@ public class PedidoServiceTest {
         Pedido pedido = new Pedido(1, cliente);
         ItemPedido item = new ItemPedido(produto, 3);
         pedido.adicionarItem(item);
-        assertThrows(IllegalArgumentException.class, () -> service.verificarEstoque(pedido));
+        ProdutoNaoEncontradoException excecao = assertThrows(ProdutoNaoEncontradoException.class, () -> service.verificarEstoque(pedido));
+        assertEquals("Produto não encontrado", excecao.getMessage());
     }
 
     @Test
@@ -120,7 +125,7 @@ public class PedidoServiceTest {
         ItemPedido item = new ItemPedido(produto, 3);
         pedido.adicionarItem(item);
         assertDoesNotThrow(() -> service.finalizarPedido(pedido));
-        IllegalArgumentException excecao = assertThrows(IllegalArgumentException.class, () -> service.finalizarPedido(pedido));
+        PedidoJaFinalizadoException excecao = assertThrows(PedidoJaFinalizadoException.class, () -> service.finalizarPedido(pedido));
         assertEquals(7, produto.getQuantidade());
         assertEquals("Pedido já finalizado", excecao.getMessage());
     }
@@ -132,7 +137,7 @@ public class PedidoServiceTest {
         Pedido pedido = new Pedido(1, cliente);
         ItemPedido item = new ItemPedido(produto, 11);
         pedido.adicionarItem(item);
-        assertThrows(IllegalArgumentException.class, () -> service.finalizarPedido(pedido));
+        assertThrows(EstoqueInsuficienteException.class, () -> service.finalizarPedido(pedido));
         assertEquals(10, produto.getQuantidade());
     }
 
@@ -193,7 +198,7 @@ public class PedidoServiceTest {
         pedido.adicionarItem(item);
         pedido.adicionarItem(item1);
 
-        IllegalArgumentException excecao = assertThrows(IllegalArgumentException.class, () -> service.finalizarPedido(pedido));
+        EstoqueInsuficienteException excecao = assertThrows(EstoqueInsuficienteException.class, () -> service.finalizarPedido(pedido));
         assertEquals(5, produto1.getQuantidade());
         assertEquals(10, produto.getQuantidade());
         assertEquals("Estoque insuficiente", excecao.getMessage());

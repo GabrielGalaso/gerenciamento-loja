@@ -1,5 +1,7 @@
 package com.gabriel.gerenciamentoloja.service;
 
+import com.gabriel.gerenciamentoloja.exception.EstoqueInsuficienteException;
+import com.gabriel.gerenciamentoloja.exception.PedidoJaFinalizadoException;
 import com.gabriel.gerenciamentoloja.model.ItemPedido;
 import com.gabriel.gerenciamentoloja.model.Pedido;
 import com.gabriel.gerenciamentoloja.model.Produto;
@@ -38,7 +40,7 @@ public class PedidoService {
         return quantidadesPorProduto;
     }
 
-        public void verificarEstoque(Pedido pedido){
+    public void verificarEstoque(Pedido pedido){
         verificarPedido(pedido);
 
         Map<Integer, Integer> quantidadesPorProduto = agruparQuantidades(pedido);
@@ -49,16 +51,17 @@ public class PedidoService {
                 Produto produtoCadastrado = produtoRepository.buscarPorId(idProduto);
 
                 if (produtoCadastrado.getQuantidade() < quantidadeTotalAcumulado){
-                    throw new IllegalArgumentException("Estoque insuficiente");
+                    throw new EstoqueInsuficienteException("Estoque insuficiente");
                 }
             }
 
     }
+
     public void finalizarPedido(Pedido pedido){
         verificarPedido(pedido);
 
         if (pedidosFinalizados.contains(pedido.getId())) {
-            throw new IllegalArgumentException("Pedido já finalizado");
+            throw new PedidoJaFinalizadoException("Pedido já finalizado");
         }
 
         verificarEstoque(pedido);

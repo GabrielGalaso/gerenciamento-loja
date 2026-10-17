@@ -1,5 +1,6 @@
 package com.gabriel.gerenciamentoloja.repository;
 
+import com.gabriel.gerenciamentoloja.exception.ProdutoNaoEncontradoException;
 import com.gabriel.gerenciamentoloja.model.Produto;
 
 
@@ -22,7 +23,7 @@ public class ProdutoRepository {
 
     public Produto buscarPorId(int id){
         if (!produtos.containsKey(id)){
-            throw new IllegalArgumentException("Produto não existe");
+            throw new ProdutoNaoEncontradoException("Produto não encontrado");
         }
         return produtos.get(id);
     }
@@ -35,7 +36,7 @@ public class ProdutoRepository {
 
     public void removerPorId(int id){
         if (!produtos.containsKey(id)){
-            throw new IllegalArgumentException("Id não encontrado para remover");
+            throw new ProdutoNaoEncontradoException("Id não encontrado para remover");
         }
         produtos.remove(id);
     }
