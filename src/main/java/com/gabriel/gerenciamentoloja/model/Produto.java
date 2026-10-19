@@ -12,7 +12,10 @@ public class Produto {
 
 //    Constructor
     public Produto(int id, String nome, BigDecimal preco, int quantidade) {
-        this.id = id;
+        if (id <= 0){
+            throw new IllegalArgumentException("O ID deve ser maior que zero");
+        }
+        this.id =id;
         this.quantidade = quantidade;
 
         setNome(nome);
@@ -49,18 +52,19 @@ public class Produto {
 
 // Getters e Setters
 
+
     public void setNome(String nome) {
         if (nome == null || nome.isBlank()){
             throw new IllegalArgumentException("O nome não pode estar vazio");
         }
-        this.nome = nome;
+        this.nome = nome.trim();
     }
 
     public void setPreco(BigDecimal preco) {
 
-        if (preco == null || preco.compareTo(BigDecimal.ZERO) < 0)
+        if (preco == null || preco.compareTo(BigDecimal.ZERO) <= 0)
         {
-            throw new IllegalArgumentException("O preço não pode ser negativo ou nulo");
+            throw new IllegalArgumentException("O preço deve ser maior que zero");
         }
         this.preco = preco;
     }
