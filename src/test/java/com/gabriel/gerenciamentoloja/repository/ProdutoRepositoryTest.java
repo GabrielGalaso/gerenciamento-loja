@@ -27,7 +27,7 @@ public class ProdutoRepositoryTest {
 
     @Test
     void deveRejeitarProdutoNulo() {
-        assertThrows(IllegalArgumentException .class, () -> repository.cadastrar(null));
+        assertThrows(IllegalArgumentException.class, () -> repository.cadastrar(null));
     }
 
     @Test
