@@ -10,10 +10,11 @@ import java.util.List;
 import java.util.Map;
 
 
-public class ProdutoRepository {
+public class ProdutoRepository implements Repository<Produto, Integer> {
 
     private final Map<Integer, Produto> produtos = new HashMap<>();
 
+    @Override
     public void cadastrar(Produto produto){
         if (produto == null || produtos.containsKey(produto.getId())){
             throw new IllegalArgumentException("Produto já cadastrado ou produto null");
@@ -21,20 +22,23 @@ public class ProdutoRepository {
        produtos.put(produto.getId(), produto);
     }
 
-    public Produto buscarPorId(int id){
+    @Override
+    public Produto buscarPorId(Integer id){
         if (!produtos.containsKey(id)){
             throw new ProdutoNaoEncontradoException("Produto não encontrado");
         }
         return produtos.get(id);
     }
 
+    @Override
     public Collection<Produto> listarTodos(){
         final List<Produto> values;
         values = List.copyOf(produtos.values());
         return values;
     }
 
-    public void removerPorId(int id){
+    @Override
+    public void removerPorId(Integer id){
         if (!produtos.containsKey(id)){
             throw new ProdutoNaoEncontradoException("Id não encontrado para remover");
         }

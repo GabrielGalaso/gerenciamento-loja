@@ -5,7 +5,7 @@ import com.gabriel.gerenciamentoloja.exception.PedidoJaFinalizadoException;
 import com.gabriel.gerenciamentoloja.model.ItemPedido;
 import com.gabriel.gerenciamentoloja.model.Pedido;
 import com.gabriel.gerenciamentoloja.model.Produto;
-import com.gabriel.gerenciamentoloja.repository.ProdutoRepository;
+import com.gabriel.gerenciamentoloja.repository.Repository;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,16 +13,16 @@ import java.util.Map;
 import java.util.Set;
 
 
-public class PedidoService {
+public class PedidoService{
 
     private final Set<Integer> pedidosFinalizados = new HashSet<>();
-    private final ProdutoRepository produtoRepository;
+    private final Repository<Produto, Integer> repositoryProduto;
 
-    public PedidoService(ProdutoRepository produtoRepository) {
-        if (produtoRepository == null){
+    public PedidoService(Repository<Produto, Integer> repositoryProduto) {
+        if (repositoryProduto == null){
             throw new IllegalArgumentException("Insira um repositório");
         }
-        this.produtoRepository = produtoRepository;
+        this.repositoryProduto = repositoryProduto;
     }
 
     public void verificarPedido(Pedido pedido) {
@@ -48,7 +48,7 @@ public class PedidoService {
             for (Map.Entry<Integer, Integer> quant : quantidadesPorProduto.entrySet()){
                 int idProduto  = quant.getKey();
                 int quantidadeTotalAcumulado = quant.getValue();
-                Produto produtoCadastrado = produtoRepository.buscarPorId(idProduto);
+                Produto produtoCadastrado = repositoryProduto.buscarPorId(idProduto);
 
                 if (produtoCadastrado.getQuantidade() < quantidadeTotalAcumulado){
                     throw new EstoqueInsuficienteException("Estoque insuficiente");
@@ -71,7 +71,7 @@ public class PedidoService {
         for (Map.Entry<Integer, Integer> quant : quantidadesPorProduto.entrySet()){
             int idProduto  = quant.getKey();
             int quantidadeTotalAcumulado = quant.getValue();
-            Produto produtoCadastrado = produtoRepository.buscarPorId(idProduto);
+            Produto produtoCadastrado = repositoryProduto.buscarPorId(idProduto);
 
             produtoCadastrado.retirarDoEstoque(quantidadeTotalAcumulado);
         }
