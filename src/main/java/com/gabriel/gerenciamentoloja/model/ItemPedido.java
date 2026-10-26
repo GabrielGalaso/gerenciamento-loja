@@ -19,6 +19,16 @@ public class ItemPedido {
         this.precoUnitario = produto.getPreco();
         this.quantidade = quantidade;
     }
+    public ItemPedido(Produto produto, int quantidade, BigDecimal precoUnitario) {
+        validarProduto(produto);
+        validarQuantidade(quantidade);
+        if (precoUnitario == null || precoUnitario.signum() <= 0) {
+            throw new IllegalArgumentException("Preço unitário inválido");
+        }
+        this.produto = produto;
+        this.quantidade = quantidade;
+        this.precoUnitario = precoUnitario;
+    }
 
     public BigDecimal calcularSubtotal(){
         return BigDecimal.valueOf(quantidade).multiply(getPrecoUnitario());
