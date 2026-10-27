@@ -1,6 +1,7 @@
 package com.gabriel.gerenciamentoloja.repository.jdbc;
 
 import com.gabriel.gerenciamentoloja.config.ConexaoFactory;
+import com.gabriel.gerenciamentoloja.exception.PedidoJaFinalizadoException;
 import com.gabriel.gerenciamentoloja.exception.PedidoNaoEncontradoException;
 import com.gabriel.gerenciamentoloja.model.Cliente;
 import com.gabriel.gerenciamentoloja.model.ItemPedido;
@@ -105,7 +106,6 @@ public class PedidoRepositoryJdbc implements Repository<Pedido, Integer> {
         if (id == null || id <= 0){
             throw new IllegalArgumentException("Id não encontrado para remover");
         }
-
         try(Connection conexao = ConexaoFactory.abrirConexao()){
             try {
                 conexao.setAutoCommit(false);
@@ -125,7 +125,6 @@ public class PedidoRepositoryJdbc implements Repository<Pedido, Integer> {
                         throw new PedidoNaoEncontradoException(  "Pedido não encontrado para remoção: " + id);
                     }
                 }
-
                 conexao.commit();
 
             }catch (SQLException | RuntimeException e) {
@@ -170,7 +169,17 @@ public class PedidoRepositoryJdbc implements Repository<Pedido, Integer> {
                 ps.setInt(1, pedido.getId());
                 ps.setInt(2, pedido.getCliente().getId());
 
-                int linhasAfetadas = ps.executeUpdate();
+                int linhasAfetadas;
+
+                try {
+                    linhasAfetadas = ps.executeUpdate();
+
+                } catch (SQLException e) {
+                    if (e.getErrorCode() == 1062) {
+                        throw new PedidoJaFinalizadoException("Pedido já finalizado: " + pedido.getId());
+                    }
+                    throw e;
+                }
                 if (linhasAfetadas != 1) {
                     throw new IllegalStateException("O pedido não foi cadastrado");
                 }

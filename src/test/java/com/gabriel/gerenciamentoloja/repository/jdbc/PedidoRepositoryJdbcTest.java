@@ -1,6 +1,7 @@
 package com.gabriel.gerenciamentoloja.repository.jdbc;
 
 import com.gabriel.gerenciamentoloja.config.ConexaoFactory;
+import com.gabriel.gerenciamentoloja.exception.PedidoJaFinalizadoException;
 import com.gabriel.gerenciamentoloja.exception.PedidoNaoEncontradoException;
 import com.gabriel.gerenciamentoloja.model.Cliente;
 import com.gabriel.gerenciamentoloja.model.ItemPedido;
@@ -265,10 +266,7 @@ public class PedidoRepositoryJdbcTest {
         pedido1 = new Pedido(910010, cliente);
         pedido1.adicionarItem(teclado);
 
-        IllegalStateException excecao = assertThrows(IllegalStateException.class, () -> pedidoRepositoryJdbc.cadastrar(pedido1));
-        assertInstanceOf(SQLException.class, excecao.getCause());
-        SQLException causa = (SQLException) excecao.getCause();
-        assertEquals(1062, causa.getErrorCode());
+        assertThrows(PedidoJaFinalizadoException.class, () -> pedidoRepositoryJdbc.cadastrar(pedido1));
 
         String sqlEstoque = "SELECT quantidade FROM produtos WHERE id = ?";
 
