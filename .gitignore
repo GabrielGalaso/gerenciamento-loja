@@ -37,3 +37,13 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+# Arquivos gerados pela aplicação
+/exportacoes/
+
+# Configurações locais do IntelliJ
+/.idea/
+
+# Arquivos com variáveis de ambiente
+.env
+.env.*

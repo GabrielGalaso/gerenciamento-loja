@@ -1,6 +1,7 @@
 package com.gabriel.gerenciamentoloja.repository.jdbc;
 
 import com.gabriel.gerenciamentoloja.config.ConexaoFactory;
+import com.gabriel.gerenciamentoloja.exception.EstoqueInsuficienteException;
 import com.gabriel.gerenciamentoloja.exception.PedidoJaFinalizadoException;
 import com.gabriel.gerenciamentoloja.exception.PedidoNaoEncontradoException;
 import com.gabriel.gerenciamentoloja.model.Cliente;
@@ -210,7 +211,7 @@ public class PedidoRepositoryJdbc implements Repository<Pedido, Integer> {
 
                     int linhasAfetadas = ps.executeUpdate();
                     if (linhasAfetadas != 1) {
-                        throw new IllegalStateException("O produto não existe ou estoque insuficiente");
+                        throw new EstoqueInsuficienteException("Estoque insuficiente para o produto ID: " + item.getProduto().getId());
                     }
                 }
 

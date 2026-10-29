@@ -1,7 +1,10 @@
 package com.gabriel.gerenciamentoloja.repository.jdbc;
 
 import com.gabriel.gerenciamentoloja.config.ConexaoFactory;
+import com.gabriel.gerenciamentoloja.exception.ClienteComPedidosException;
+import com.gabriel.gerenciamentoloja.exception.ClienteJaCadastradoException;
 import com.gabriel.gerenciamentoloja.exception.ClienteNaoEncontradoException;
+import com.gabriel.gerenciamentoloja.exception.ProdutoJaCadastradoException;
 import com.gabriel.gerenciamentoloja.model.Cliente;
 
 import com.gabriel.gerenciamentoloja.repository.Repository;
@@ -62,6 +65,9 @@ public class ClienteRepositoryJdbc implements Repository<Cliente, Integer> {
             }
 
         }catch (SQLException e) {
+            if (e.getErrorCode() == 1451) {
+                throw new ClienteComPedidosException("Não foi possíve remover o cliente: " + id);
+            }
             throw new IllegalStateException("Erro ao deletar cliente no banco", e);
         }
     }
@@ -90,6 +96,9 @@ public class ClienteRepositoryJdbc implements Repository<Cliente, Integer> {
             }
 
         }catch (SQLException e) {
+            if (e.getErrorCode() == 1062) {
+                throw new ClienteJaCadastradoException("Cliente com ID " + cliente.getId() + " já cadastrado!");
+            }
             throw new IllegalStateException("Erro ao cadastrar cliente no banco", e);
         }
     }
